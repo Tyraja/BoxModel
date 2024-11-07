@@ -1,7 +1,7 @@
 function myode
 %declare variables global for func to call on
 global tspan;
-tspan = [0 1500];
+tspan = [0 2000];
 
 global T Pl Ph fhd Vl Vh Vd;
 
@@ -20,7 +20,7 @@ A_ocean = 349E12; %m^2, area of the ocean
 %% Variables %%
 
 % thermohaline circulation
-T_Sv = 20E6; % m^3 s^-1
+T_Sv = 20E6 % m^3 s^-1
 T = T_Sv*s_to_y*rho; %kg y^-1
 
 %Pumps
@@ -34,7 +34,7 @@ P_P = P_C/162.5;
 Ph  = P_P*0.15*A_ocean; %umol P y^-1
 % Pump low lattitude 
 %Pl  =  P_P*A_ocean; %umol P y^-1
-Pl = T*X(3); %umol P y^-1
+Pl = T*X(3) %umol P y^-1
 
 % Mixing 
 fhd_init  = 60E6; %m^3 s^-1
@@ -54,6 +54,13 @@ Vd  = 1.249E18*rho; %kg seawater
 % solve the problem using ODE45
 figure(1)
 ode45(@f,tspan,X);
+legend({'Xl', 'Xh', 'Xd'})
+xlabel('Time (years)')
+ylabel('umol PO4 per kg seawater')
+title('PO4 Three Box Model')
+ylim([-0.001 2.5])
+subtitle(['T= ', num2str(T_Sv*10E-7),' Sv'])
+
 %set(gca,'YScale', 'log')
 
 % --------------------------------------------------------------------------
@@ -66,9 +73,4 @@ global T Pl Ph fhd Vl Vh Vd;
 dydt = [((T*(y(3)-y(1))-Pl)/Vl)
     ((T*(y(1)-y(2))-Ph+fhd*(y(3)-y(2)))/Vh)
     ((T*(y(2)-y(3))+Pl+Ph+fhd*(y(2)-y(3)))/Vd)];
-
-legend({'Xl', 'Xh', 'Xd'})
-xlabel('Time (years)')
-ylabel('umol PO4 per kg seawater')
-title('PO4 Three Box Model')
 %outputing in umol kg^-1
